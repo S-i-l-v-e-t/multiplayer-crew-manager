@@ -408,7 +408,8 @@ namespace MultiplayerCrewManager
 
                 crewManager.AddCharacterInfo(client.CharacterInfo);
                 client.AssignedJob = client.JobPreferences[0];
-                client.CharacterInfo.Job = new Job(client.AssignedJob.Prefab, Rand.RandSync.Unsynced, client.AssignedJob.Variant);
+                /// Modified 0.1 By Silvet : fill pvp argument with false because i wont play.(Lazy dog)
+                client.CharacterInfo.Job = new Job(client.AssignedJob.Prefab, false, Rand.RandSync.Unsynced, client.AssignedJob.Variant);
 
                 //Setting a waypoint
                 Barotrauma.WayPoint waypoint = null;
@@ -466,7 +467,8 @@ namespace MultiplayerCrewManager
                 crewManager.AddCharacter(character);
 
                 Manager.Set(client, character);
-                character.GiveJobItems(waypoint);
+                /// Modified 0.1 By Silvet : fill pvp argument with false because i wont play.(Lazy dog)
+                character.GiveJobItems(false,waypoint);
             }
             return success;
         }

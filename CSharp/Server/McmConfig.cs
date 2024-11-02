@@ -21,7 +21,7 @@ namespace MultiplayerCrewManager
         public McmLoggingLevel LoggingLevel = McmLoggingLevel.Info;
 
         public int ServerUpdateFrequency = 15;
-        public bool AutoSpawn = true;
+        public bool AutoSpawn = false;
         public bool SecureEnabled = false;
         //public float RespawnDelay = 5;
 
@@ -139,7 +139,7 @@ namespace MultiplayerCrewManager
                 "---------------------------\n" +
                 $"{nameof(UseShuttle)}: {UseShuttle}\n" +
                 $"{nameof(RespawnShuttle)}: {RespawnShuttle}\n" +
-                $"{nameof(ShuttleTransportTime)}: {ShuttleTransportTime}s\n" +
+                $"Shuttle {nameof(ShuttleTransportTime)}: {ShuttleTransportTime}s\n" +
                 "---------------------------\n" +
                 $"{nameof(SecureEnabled)}: {SecureEnabled},\n" +
                 $"{nameof(LoggingLevel)}: {(int)LoggingLevel} - {LoggingLevel}\n" +

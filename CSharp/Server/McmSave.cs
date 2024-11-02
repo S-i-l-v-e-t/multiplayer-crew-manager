@@ -183,7 +183,8 @@ namespace MultiplayerCrewManager
                     client.CharacterInfo.TeamID = CharacterTeamType.Team1;
 
                     client.AssignedJob = client.JobPreferences[0];
-                    client.CharacterInfo.Job = new Job(client.AssignedJob.Prefab, Rand.RandSync.Unsynced, client.AssignedJob.Variant);
+                    /// Modified 0.1 By Silvet : fill pvp argument with false because i wont play.(Lazy dog)
+                    client.CharacterInfo.Job = new Job(client.AssignedJob.Prefab, false, Rand.RandSync.Unsynced, client.AssignedJob.Variant);
                     crewManager.AddCharacterInfo(client.CharacterInfo);
 
                     clientCount++;
@@ -229,8 +230,8 @@ namespace MultiplayerCrewManager
                         characterData.Refresh(character, true);
                     }
                 }
-
-                Barotrauma.SaveUtil.SaveGame(GameMain.GameSession.SavePath);
+                /// Modified 0.1 By Silvet : SavePath -> DataPath
+                Barotrauma.SaveUtil.SaveGame(GameMain.GameSession.DataPath);
                 RequireImportSaving = false;
             }
         }

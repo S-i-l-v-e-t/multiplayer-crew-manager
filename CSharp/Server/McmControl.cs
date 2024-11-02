@@ -69,7 +69,8 @@ namespace MultiplayerCrewManager
 
         public WayPoint[] GetRespawnPoints(IEnumerable<CharacterInfo> crew)
         {
-            var respawnSub = RespawnManager.RespawnShuttle;
+            /// Modified 0.1 By Silvet : RespawnShuttle -> RespawnShuttles.FirstOrDefault()
+            var respawnSub = RespawnManager.RespawnShuttles.FirstOrDefault();
             if (respawnSub == null || Level.IsLoadedOutpost) respawnSub = Submarine.MainSub;
             return WayPoint.SelectCrewSpawnPoints(crew.ToList(), respawnSub);
         }
@@ -84,7 +85,8 @@ namespace MultiplayerCrewManager
                 var prefab = charInfo.Job.Prefab.Skills.FirstOrDefault(s => skill.Identifier == s.Identifier);
                 if (prefab != null)
                 {
-                    skill.Level = Math.Max(prefab.LevelRange.Start, skill.Level * convertedToScalar);
+                    /// Modified 0.1 By Silvet : LevelRange -> levelRange
+                    skill.Level = Math.Max(prefab.levelRange.Start, skill.Level * convertedToScalar);
                     McmUtils.Trace($"Reducing skill \"{skill.Identifier}\" by {skillLoss}%. New value {skill.Level}");
                 }
             }
@@ -119,18 +121,20 @@ namespace MultiplayerCrewManager
                     McmUtils.Info($"Inflicting respawn penalty affliction on character \"{charInfo.Name}\"");
                 }
             }
-            character.GiveJobItems(spawnPoint);
+            /// Modified 0.1 By Silvet : Usage Change GiveJobItems(WayPoint wp) => GiveJobItems(bool isPvp,WayPoint wp)
+            /// fill pvp argument with false because i wont play.(Lazy dog)
+            character.GiveJobItems(false,spawnPoint);
             character.GiveIdCardTags(spawnPoint);
         }
 
         public IEnumerable<Character> GetRespawnSubChars()
         {
-            return Character.CharacterList.Where(c => c.TeamID == CharacterTeamType.Team1 && !c.IsDead && c.Submarine == RespawnManager.RespawnShuttle);
+            return Character.CharacterList.Where(c => c.TeamID == CharacterTeamType.Team1 && !c.IsDead && c.Submarine == RespawnManager.RespawnShuttles.FirstOrDefault());
         }
 
         public bool TryRespawn(bool forceRespawn = false)
         {
-            if (RespawnManager.RespawnShuttle != null)
+            if (RespawnManager.RespawnShuttles.Any())
             {
                 // get all chars on respawn sub
                 var charsOnSub = GetRespawnSubChars();
@@ -152,15 +156,16 @@ namespace MultiplayerCrewManager
             }
 
             // dispatch respawn shuttle if needed
-            if (RespawnManager.RespawnShuttle != null && !Level.IsLoadedOutpost)
+            if (RespawnManager.RespawnShuttles.Any() && !Level.IsLoadedOutpost)
             {
-                var shuttle = RespawnManager.RespawnShuttle;
+                var shuttle = RespawnManager.RespawnShuttles.FirstOrDefault();
+                var mainSub = Submarine.MainSub;
                 var shuttleSteering = Item.ItemList.FirstOrDefault(i => i.Submarine == shuttle)?.GetComponent<Steering>();
 
                 ResetShuttle();
                 if (shuttleSteering != null) shuttleSteering.TargetVelocity = Vector2.Zero;
 
-                shuttle.SetPosition(RespawnManager.FindSpawnPos());
+                shuttle.SetPosition(RespawnManager.FindSpawnPos(shuttle, mainSub));
                 shuttle.Velocity = Vector2.Zero;
                 shuttle.NeutralizeBallast();
                 shuttle.EnableMaintainPosition();
