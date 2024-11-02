@@ -1,5 +1,5 @@
 Steam workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=2775613786
-
+Fixed by Silvet for Break the v1.6.17.0 (PvE only,maybe someday i'll expend PvP mode if the origin author still not update..)
 # Description
 
 Got only a few friends that you want to play Barotrauma with, but the Bots make game less tolerable? **Well worry no more! Kinda ...**
@@ -41,7 +41,7 @@ Want to message me more directly? Message me on my **[discord](https://discord.g
 - - - -
 
 Steam 创意工坊：https://steamcommunity.com/sharedfiles/filedetails/?id=2775613786
-
+修复了前往破口更新导致的代码损坏（目前还只有pve模式，或许哪天我心血来潮且原作者没更新就把pvp加上吧）
 # 介绍
 
 **也许你只有很少的朋友**愿意和你一起玩这个游戏，但人工智障控制的船员让你难以忍受？那么这个模组可以满足你的要求。
