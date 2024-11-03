@@ -265,11 +265,12 @@ namespace MultiplayerCrewManager
             CharacterData.Clear();
             PipeIndex = 0;
             // add dummy
+            // Test code
             foreach (var character in Character.CharacterList.Where(c => c.TeamID == CharacterTeamType.Team1 && c.Info != null))
             {
                 // Team1, meaning default crew
 
-                if (crewManager.GetCharacterInfos().Any(ci => character.Info == ci))
+                if (crewManager.GetCharacterInfos().Any(ci => character.Info == ci) || character.IsRemotePlayer)
                 { // if not fired
                     if (false == character.IsDead)
                     {

@@ -266,7 +266,7 @@ namespace MultiplayerCrewManager
                 "mcm_MultiPlayerCampaign_LoadCampaign",
                 "Barotrauma.MultiPlayerCampaign",
                 "LoadCampaign",
-                new string[] { "System.String", "Barotrauma.Networking.Client" },
+                new string[] { "Barotrauma.CampaignDataPath", "Barotrauma.Networking.Client" },
                 (instance, ptable) =>
                 {
                     Save.OnLoadCampaign();
@@ -275,17 +275,12 @@ namespace MultiplayerCrewManager
                 LuaCsHook.HookMethodType.After);
 
             // init datas and clients, depending on campaign status
+            /// Modified by Silvet , use TryStartGame replced private method StartGame
             GameMain.LuaCs.Hook.Patch(
                 "mcm_GameServer_StartGame",
                 "Barotrauma.Networking.GameServer",
-                "StartGame",
-                new string[]
-                {
-                    "Barotrauma.SubmarineInfo",
-                    "Barotrauma.SubmarineInfo",
-                    "Barotrauma.GameModePreset",
-                    "Barotrauma.CampaignSettings"
-                },
+                "TryStartGame",
+                new string[] { },
                 (instance, ptable) =>
                 {
                     Save.OnStartGame();
@@ -338,22 +333,39 @@ namespace MultiplayerCrewManager
 
         public void ClientListUpdate()
         {
+            var crewManager = GameMain.GameSession.CrewManager;
             var toBeCreated = new List<Client>();
             // update client control status
-            foreach (var client in Client.ClientList)
+            foreach (var client in GameMain.Server.ConnectedClients)
             {
-                Manager.Set(client, client.Character);
+                
                 if (client.InGame && !client.SpectateOnly)
                 {
+                    Manager.Set(client, null);
                     // mark client in game registered
                     client.SpectateOnly = true;
                     McmUtils.Info($"New client - {client.CharacterID} | '{client.Name}'");
                     // if spawning is enabled then check if spawn is needed
-                    if (McmMod.Config.AutoSpawn && client.InGame && client.Character == null)
+                    
+                    if (client.InGame && client.Character == null)
                     {
-                        var character = Character.CharacterList.FirstOrDefault(c => c.TeamID == CharacterTeamType.Team1 && c.Name == client.Name);
-                        if (character != null && !Manager.IsCurrentlyControlled(character)) Manager.Set(client, character);
-                        else toBeCreated.Add(client);
+                        
+                        while (Character.CharacterList.Where(c => c.Name == client.Name).Count() >= 2){
+                        Manager.Set(client, null);
+                        var chr = Character.CharacterList.FirstOrDefault(c => c.Name == client.Name);
+                        chr.Remove();
+                        crewManager.RemoveCharacter(chr,true,true);
+
+                        McmUtils.Info($"Delete Duplicate Player");
+                        }
+                        var character = Character.CharacterList.FirstOrDefault(c => c.Name == client.Name);
+                        if (character != null) {Manager.Set(client, character);client.Character = character;}
+                        else {
+                            McmUtils.Info($"Creating client character - {client.Name} | '{client.Name}'");
+                            bool rst = Character.CharacterList.Any(c => c.Name == client.Name);
+                            McmUtils.Info($"Found - {rst}");
+                            toBeCreated.Add(client);
+                        };
                     }
                 }
             }
